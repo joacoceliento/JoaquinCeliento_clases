@@ -51,6 +51,9 @@ class Register extends Component {
         <Pressable style={styles.button} onPress={() => this.onSubmit()}>
           <Text style={styles.buttonText}>Registrate</Text>
         </Pressable>
+        <Pressable style={styles.button} onPress={() => this.props.navigation.navigate('Login')}>
+                  <Text style={styles.buttonText}>Ya tengo cuenta</Text>
+        </Pressable>
 
         <View style={{ marginTop: 20 }}>
           <Text>Datos ingresados:</Text>
@@ -87,6 +90,7 @@ const styles = {
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#28a745',
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',

@@ -13,7 +13,7 @@ class Login extends Component {
   onSubmit() {
     console.log('Email:', this.state.email);
     console.log('Password:', this.state.password);
-    this.props.navigation.navigate('Register');
+    this.props.navigation.navigate('HomeMenu');
   }
 
   render() {
@@ -40,6 +40,10 @@ class Login extends Component {
 
         <Pressable style={styles.button} onPress={() => this.onSubmit()}>
           <Text style={styles.buttonText}>Login</Text>
+        </Pressable>
+
+        <Pressable style={styles.button} onPress={() => this.props.navigation.navigate('Register')}>
+          <Text style={styles.buttonText}>No tengo cuenta</Text>
         </Pressable>
 
         <View style={{ marginTop: 20 }}>
@@ -76,6 +80,7 @@ const styles = {
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#28a745',
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
