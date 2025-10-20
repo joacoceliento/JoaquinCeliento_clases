@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import DynamicForm from '../components/DynamicForm';
 
-function Home(props) {
+function Home() {
   return (
     <View style={styles.view1}>
       <Text>Este es Home</Text>
+      <DynamicForm />
     </View>
   );
 }
@@ -14,7 +16,7 @@ const styles = {
     textAlign: 'center',
     padding: 10,
     alignItems: 'center',
-    backgroundColor: 'lightgray',
+    backgroundColor: 'white',
   },
 };
 
