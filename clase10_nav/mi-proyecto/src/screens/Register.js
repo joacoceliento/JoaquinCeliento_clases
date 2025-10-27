@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
+import { db, auth } from '../firebase/config';
 
 class Register extends Component {
   constructor(props) {
@@ -8,14 +9,29 @@ class Register extends Component {
       email: '',
       username: '',
       password: '',
+      error: '',
+      registered: false,
     };
   }
 
   onSubmit() {
-    console.log('Email:', this.state.email);
-    console.log('Usuario:', this.state.username);
-    console.log('Password:', this.state.password);
-    this.props.navigation.navigate('HomeMenu');
+    auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then(response => {
+        // Guardamos datos del usuario en la colección 'users'
+        db.collection('users').add({
+          owner: auth.currentUser.email,
+          username: this.state.username,
+          createdAt: Date.now(),
+        })
+        .then(() => {
+          this.setState({ registered: true, error: '' });
+          this.props.navigation.navigate('Login');
+        })
+        .catch(e => console.log(e));
+      })
+      .catch(error => {
+        this.setState({ error: 'Fallo en el registro.' });
+      });
   }
 
   render() {
@@ -33,7 +49,6 @@ class Register extends Component {
 
         <TextInput
           style={styles.input}
-          keyboardType="default"
           placeholder="username"
           onChangeText={text => this.setState({ username: text })}
           value={this.state.username}
@@ -41,18 +56,25 @@ class Register extends Component {
 
         <TextInput
           style={styles.input}
-          keyboardType="default"
           placeholder="password"
           secureTextEntry={true}
           onChangeText={text => this.setState({ password: text })}
           value={this.state.password}
         />
 
+        {!!this.state.error && (
+          <Text style={{ color: 'red' }}>{this.state.error}</Text>
+        )}
+
         <Pressable style={styles.button} onPress={() => this.onSubmit()}>
           <Text style={styles.buttonText}>Registrate</Text>
         </Pressable>
-        <Pressable style={styles.button} onPress={() => this.props.navigation.navigate('Login')}>
-                  <Text style={styles.buttonText}>Ya tengo cuenta</Text>
+
+        <Pressable
+          style={styles.button}
+          onPress={() => this.props.navigation.navigate('Login')}
+        >
+          <Text style={styles.buttonText}>Ya tengo cuenta</Text>
         </Pressable>
 
         <View style={{ marginTop: 20 }}>

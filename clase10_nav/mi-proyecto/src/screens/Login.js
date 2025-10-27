@@ -1,19 +1,34 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
+import { auth } from '../firebase/config';
 
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      email: '',
-      password: '',
-    };
+    this.state = { email: '', password: '', error: '', loggedIn: false };
   }
 
   onSubmit() {
-    console.log('Email:', this.state.email);
-    console.log('Password:', this.state.password);
-    this.props.navigation.navigate('HomeMenu');
+    let email = this.state.email;
+    let password = this.state.password;
+
+    if (!email.includes('@')) {
+      this.setState({ error: 'Email mal formateado' });
+      return;
+    }
+    if (password.length < 6) {
+      this.setState({ error: 'La password debe tener una longitud mínima de 6 caracteres' });
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        this.setState({ loggedIn: true, error: '' });
+        this.props.navigation.navigate('HomeMenu'); // Redirige al Home
+      })
+      .catch(() => {
+        this.setState({ error: 'Credenciales incorrectas' });
+      });
   }
 
   render() {
@@ -31,18 +46,22 @@ class Login extends Component {
 
         <TextInput
           style={styles.input}
-          keyboardType="default"
           placeholder="password"
           secureTextEntry={true}
           onChangeText={text => this.setState({ password: text })}
           value={this.state.password}
         />
 
+        {!!this.state.error && <Text style={{ color: 'red' }}>{this.state.error}</Text>}
+
         <Pressable style={styles.button} onPress={() => this.onSubmit()}>
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
 
-        <Pressable style={styles.button} onPress={() => this.props.navigation.navigate('Register')}>
+        <Pressable
+          style={styles.button}
+          onPress={() => this.props.navigation.navigate('Register')}
+        >
           <Text style={styles.buttonText}>No tengo cuenta</Text>
         </Pressable>
 
@@ -57,34 +76,18 @@ class Login extends Component {
 }
 
 const styles = {
-  container: {
-    paddingHorizontal: 10,
-    marginTop: 20,
-  },
+  container: { paddingHorizontal: 10, marginTop: 20 },
   input: {
-    height: 20,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderStyle: 'solid',
-    borderRadius: 6,
-    marginVertical: 10,
+    height: 20, paddingVertical: 15, paddingHorizontal: 10,
+    borderWidth: 1, borderColor: '#ccc', borderStyle: 'solid',
+    borderRadius: 6, marginVertical: 10,
   },
   button: {
-    backgroundColor: '#28a745',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    alignItems: 'center',
-    borderRadius: 4,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#28a745',
-    marginTop: 10,
+    backgroundColor: '#28a745', paddingHorizontal: 10, paddingVertical: 6,
+    alignItems: 'center', borderRadius: 4, borderWidth: 1,
+    borderStyle: 'solid', borderColor: '#28a745', marginTop: 10,
   },
-  buttonText: {
-    color: '#fff',
-  },
+  buttonText: { color: '#fff' },
 };
 
 export default Login;
